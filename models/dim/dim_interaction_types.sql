@@ -1,0 +1,1 @@
+select * from {{ref('interaction_types_cleaned')}}

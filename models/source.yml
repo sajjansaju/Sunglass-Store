@@ -1,0 +1,22 @@
+version: 2
+
+sources:
+  - name: raw_data
+    database: AwsDataCatalog
+    schema: sunglass_store
+    tables:
+
+      - name: orders
+        identifier: orders
+
+      - name: interactions
+        identifier: interactions
+
+      - name: products
+        identifier: products
+
+      - name: users
+        identifier: users
+
+      - name: interaction_types
+        identifier: interaction_types
