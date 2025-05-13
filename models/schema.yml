@@ -9,19 +9,7 @@ models:
         tests:
           - unique
           - not_null
-          - relationships:
-              to: ref('dim_products')
-              field: list_date
-          - relationships:
-              to: ref('dim_users')
-              field: join_date
-          - relationships:
-              to: ref('fct_interactions')
-              field: interaction_date
-          - relationships:
-              to: ref('fct_orders')
-              field: purchase_date
-              
+
       - name: year
         tests:
           - not_null
@@ -64,4 +52,177 @@ models:
           - accepted_values:
               values: ['Weekday','Weekend']
 
+  - name: dim_interaction_types
+    columns:
+
+      - name: id 
+        tests:
+          - not_null
+          - unique
+
+      - name: interaction_type 
+        tests:
+          - not_null
+          
+  - name: dim_products
+    columns:
+
+      - name: item_id
+        tests:
+          - unique
+          - not_null
       
+      - name: brand
+        tests:
+          - not_null
+
+      - name: product_name
+        tests:
+          - not_null
+
+      - name: eye_size
+        tests:
+          - not_null
+
+      - name: lens_color
+        tests:
+          - not_null
+
+      - name: price
+        tests:
+          - not_null
+
+      - name: polarized_glasses
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Yes','No'] 
+
+      - name: prescribed_glasses
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Yes','No']                
+      - name: is_active
+        tests:
+          - not_null
+
+      - name: list_date
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_dates')
+              field: date_actual
+      
+  - name: dim_users
+    columns:
+
+      - name: user_id
+        tests:
+          - unique
+          - not_null
+      
+      - name: first_name
+        tests:
+          - not_null
+
+      - name: last_name
+        tests:
+          - not_null
+
+      - name: email
+        tests:
+          - not_null  
+
+      - name: age
+        tests:
+          - not_null
+
+      - name: gender
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['M','F']
+      
+      - name: post_code
+        tests:
+          - not_null
+
+      - name: country
+        tests:
+          - not_null
+
+      - name: join_date
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_dates')
+              field: date_actual
+
+      - name: from_platform
+        tests:
+          - not_null
+
+  - name: fct_interactions
+    columns:
+
+      - name: user_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_users')          
+              field: user_id
+
+      - name: item_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_products')
+              field: item_id
+
+      - name: interaction_date
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_dates')       
+              field: date_actual
+
+      - name: interaction_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_interaction_types')         
+              field: id
+
+  - name: fct_orders
+    columns:
+
+      - name: user_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_users')    
+              field: user_id
+
+      - name: item_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_products')
+              field: item_id
+
+      - name: purchase_date
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_dates')
+              field: date_actual
+
+      - name: order_id
+        tests:
+          - unique
+          - not_null
+
+      - name: payment_type
+        tests:
+          - not_null
