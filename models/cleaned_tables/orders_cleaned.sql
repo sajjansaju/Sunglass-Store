@@ -4,7 +4,7 @@ with orders_cleaned as (
 select 
 		user_id,
 		item_id,
-		date(purchase_date) as purchase_date,
+		cast(purchase_date as date) as purchase_date,
 		order_id,
 		trim(regexp_replace(payment_type,'[.,\/_-]',' ')) as payment_type
 from orders_cleaned;

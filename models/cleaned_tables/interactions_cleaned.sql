@@ -4,6 +4,6 @@ with interactions_cleaned as (
 select 
 		user_id,
 		item_id,
-		date(interaction_date) as interaction_date,
+		cast(interaction_date as date) as interaction_date,
 		interaction_id
 from interactions_cleaned;

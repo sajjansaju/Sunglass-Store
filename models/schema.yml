@@ -1,0 +1,67 @@
+version: 2
+
+models:
+
+  - name: dim_dates
+    columns:
+
+      - name: date_actual
+        tests:
+          - unique
+          - not_null
+          - relationships:
+              to: ref('dim_products')
+              field: list_date
+          - relationships:
+              to: ref('dim_users')
+              field: join_date
+          - relationships:
+              to: ref('fct_interactions')
+              field: interaction_date
+          - relationships:
+              to: ref('fct_orders')
+              field: purchase_date
+              
+      - name: year
+        tests:
+          - not_null
+
+      - name: month
+        tests:
+          - not_null
+      
+      - name: day
+        tests:
+          - not_null
+
+      - name: quarter
+        tests:
+          - not_null
+
+      - name: day_of_week
+        tests:
+          - not_null
+
+      - name: day_of_year
+        tests:
+          - not_null
+
+      - name: month_name
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['January', 'February','March','April','May','June','July','August','September','October','November','December']
+
+      - name: weekday_name
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
+
+      - name: day_type
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Weekday','Weekend']
+
+      

@@ -11,7 +11,7 @@ select
 		polarized_glasses,
 		prescribed_glasses,
 		is_active,
-		date(list_date) as list_date,
-		date(discontinued_date) as discontinued_date
+		cast(list_date as date) as list_date,
+		cast(discontinued_date as date) as discontinued_date
 from products_cleaned;
 

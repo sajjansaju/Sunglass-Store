@@ -10,6 +10,6 @@ select
 		upper(substring(gender from 1 for 1))as gender,
 		post_code,
 		upper(substring(country,1 ,1))|| lower(substring(country from 2)) as country,
-		date(join_date) as join_date,
+		cast(join_date as date) as join_date,
 		trim(REGEXP_REPLACE(from_platform, '[, . \ - _ ?]', ' ')) as from_platform
 from users_cleaned;
