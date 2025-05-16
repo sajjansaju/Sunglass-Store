@@ -1,6 +1,6 @@
 # 🕶️ Sunglass Store – dbt Analytics Project
 
-This repository contains the dbt (data build tool) project for the Sunglass Store, an e-commerce business focused on eyewear. The project transforms raw data into clean, reliable, and analysis-ready models following the medallion architecture (Bronze → Silver → Gold).   
+This repository contains the dbt (data build tool) project for the Sunglass Store, an e-commerce business focused on eyewear. The project transforms raw data into clean, reliable, and analysis-ready models following the medallion architecture (Bronze → Silver → Gold).    
 
 ---
 
