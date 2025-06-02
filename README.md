@@ -746,3 +746,48 @@ models:
         tests:
           - not_null
 ```
+
+## 📸 Proof of End-to-End ELT Pipeline Execution
+
+The screenshots below serve as evidence of the successful implementation of the **entire dbt analytics pipeline** for the Sunglass Store project — from raw data ingestion through AWS Athena to building clean, business-ready models using dbt in VS Code.
+
+### 🧱 Screenshot 1: dbt Project Structure and Execution in VS Code
+
+![dbt project in VS Code](https://github.com/sajjansaju/Sunglass-Store/blob/53008f34d6118911ccc200a8b547a3ed00fbee77/Screenshot%202025-06-02%20173126.png?raw=true)
+
+
+This screenshot demonstrates:
+- Use of **dbt (open source)** in **VS Code** to build a layered transformation pipeline following the **Medallion Architecture** (Bronze → Silver → Gold → Semantic).
+- Organized model structure with version-controlled SQL logic and config files.
+- CLI execution of specific models (`dbt run --select total_revenue`).
+- The presence of semantic metrics like `total_revenue.sql` in the `models/semantic_layer/` directory.
+
+📌 This reflects a practical **ELT pipeline**, where:
+- Raw data is **Extracted and Loaded** into **AWS Athena** using external tables.
+- dbt **Transforms** and layers data across multiple stages.
+- Models are modular, testable, and reusable.
+
+---
+
+### ☁️ Screenshot 2: dbt Models Materialized as Views in AWS Athena
+
+![Semantic Views in Athena](https://github.com/sajjansaju/Sunglass-Store/blob/53008f34d6118911ccc200a8b547a3ed00fbee77/Screenshot%202025-06-02%20174527.png?raw=true)
+
+
+This screenshot confirms:
+- dbt models are **successfully deployed to AWS Athena** as SQL views.
+- Views like `customer_ltv`, `monthly_sales_trend`, and `funnel_conversion_per_product` are accessible through the AWS Athena query editor.
+- Fact tables such as `fct_orders` and dimension tables are live, enabling deep dive analytics.
+
+📌 This validates:
+- Cloud-based query execution using **Athena + AWS Data Catalog**.
+- Successful integration of dbt-generated views into a production-like analytics environment.
+- Readiness of data for use in BI tools like **Power BI**, **Tableau**, or **Looker Studio**.
+
+---
+
+🧠 Together, these screenshots demonstrate hands-on ability to:
+- Design, execute, and manage a full **dbt ELT pipeline**
+- Work with **cloud-based data infrastructure (AWS Athena)**
+- Build clean, tested, and **BI-ready** analytical models
+
