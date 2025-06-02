@@ -15,6 +15,7 @@ This repository contains the dbt (data build tool) project for the Sunglass Stor
 | `models/cleaned_tables/`      | Silver layer: Cleans and standardizes raw source tables.                    |
 | `models/dim/`                 | Gold layer: Dimension tables like `dim_users`, `dim_products`, `dim_dates`. |
 | `models/fact/`                | Gold layer: Fact tables such as `fct_orders` and `fct_interactions`.        |
+| `models/semantic_layer/`      | Semantic layer: Business-ready metrics and KPIs for BI dashboards.          |
 | `seeds/`                      | Holds static `.csv` seed files                                              |
 | `snapshots/`                  | Used for tracking slowly changing dimensions over time.                     |
 | `tests/`                      | Custom schema tests.                                                        |
@@ -365,6 +366,129 @@ select * from {{ref('orders_cleaned')}}
 {% endif %}
 ```
 
+### 🗣️ Semantic Layer (Business-Friendly Metrics)
+
+The **semantic layer** sits on top of the gold models and provides pre-aggregated, business-friendly views that are easy to use in BI tools like Power BI, Tableau, or Looker Studio.
+
+#### 📂 Located in:
+- models/semantic_layer/
+
+
+#### 📊 Defined Semantic Models
+
+| Model Name                      | Description                                                             |
+|--------------------------------|-------------------------------------------------------------------------|
+| `total_revenue.sql`            | Total revenue from all orders (joined with product prices).             |
+| `average_order_value.sql`      | Average spend per order.                                                |
+| `customer_LTV.sql`             | Total spend per customer across all orders.                             |
+| `days_to_first_purchase.sql`   | Time between user signup and their first purchase.                      |
+| `funnel_conversion_per_product.sql` | Unique user count by interaction type per product.               |
+| `monthly_sales_trend.sql`      | Total monthly revenue over time.                                        |
+| `revenue_by_platforms.sql`     | Revenue grouped by signup platform (e.g., social media).                |
+| `repeat_customer_flag.sql`     | Indicates if a customer made more than one purchase.                    |
+| `age_group_distribution.sql`   | Distribution of users by age group.                                     |
+
+
+#### 🔁 dbt Model Reference
+```sql
+
+--total_revenue.sql
+SELECT
+  cast(round(SUM(p.price),2) as decimal(16,2)) AS total_revenue
+FROM {{ref('fct_orders')}} o
+JOIN {{ref('dim_products')}} p
+ON o.item_id = p.item_id;
+
+--average_order_value.sql
+select cast(SUM(p.price)/ count(o.order_id) as decimal(10,2)) as avg_order_value
+from {{ ref('fct_orders') }} o
+join {{ ref('dim_products')}} p
+on o.item_id = p.item_id;
+
+--customer_LTV.sql
+select u.user_id,
+        cast(sum(p.price) as decimal(10,2)) as lifetime_value
+from {{ref('dim_users')}} u
+join {{ref('fct_orders')}} o 
+on u.user_id = o.user_id
+join {{ref('dim_products')}} p
+on p.item_id = o.item_id
+group by u.user_id
+order by lifetime_value desc;
+
+--days_to_first_purchase.sql
+select u.user_id,
+        u.join_date,
+        min(o.purchase_date) as first_purchase_date,
+        date_diff('day',u.join_date, min(o.purchase_date)) as days_to_first_purchase
+from {{ref('dim_users')}} u
+join {{ref('fct_orders')}} o 
+on o.user_id= u.user_id
+group by u.user_id,
+            u.join_date
+order by days_to_first_purchase desc;
+
+--funnel_conversion_per_product.sql
+select i.item_id,
+        it.interaction_type,
+        count(distinct i.user_id) as user_count
+from {{ref('dim_interaction_types')}} it 
+join {{ref('fct_interactions')}} i 
+on i.interaction_id = it.id 
+group by i.item_id, it.interaction_type
+order by i.item_id, it.interaction_type;
+
+--monthly_sales_trend.sql
+select dd.month,
+        cast(sum(p.price) as decimal(10,2)) as total_revenue
+from {{ref('dim_dates')}} dd
+join {{ref('fct_orders')}} o 
+on o.purchase_date = dd.date_actual
+join {{ref('dim_products')}} p 
+on p.item_id = o.item_id
+group by dd.month
+order by month;
+
+--revenue_by_platforms.sql
+select u.from_platform,
+        cast(sum(p.price) as decimal(10,2)) as total_revenue
+from {{ref('dim_users')}} u 
+join {{ref('fct_orders')}} o 
+on o.user_id = u.user_id
+join {{'dim_products'}} p 
+on p.item_id = o.item_id
+group by u.from_platform;
+
+--repeat_customer_flag.sql
+select o.user_id,
+        case
+            when COUNT(DISTINCT o.order_id) > 1 THEN 'Yes'
+            ELSE 'No'
+        end as repeat_customer
+from {{ref('fct_orders')}} o 
+group by o.user_id;
+
+--age_group_distribution.sql
+select 
+        case
+            WHEN age < 18 THEN 'Under 18'
+            WHEN age BETWEEN 18 AND 25 THEN '18-25'
+            WHEN age BETWEEN 26 AND 35 THEN '26-35'
+            WHEN age BETWEEN 36 AND 50 THEN '36-50'
+            ELSE '51+' 
+        end as age_group,
+        count(*) as user_count
+from {{ref('dim_users')}}
+group by 
+        case
+            WHEN age < 18 THEN 'Under 18'
+            WHEN age BETWEEN 18 AND 25 THEN '18-25'
+            WHEN age BETWEEN 26 AND 35 THEN '26-35'
+            WHEN age BETWEEN 36 AND 50 THEN '36-50'
+            ELSE '51+' 
+        end
+ORDER BY age_group;
+```
 ---
 ### 🧪 Data Testing – `schema.yml`
 
