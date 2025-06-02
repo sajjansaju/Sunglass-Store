@@ -38,4 +38,5 @@ models:
       +materialized: table
     fact:
       +materialized: table
-      
+    semantic_layer:
+      +materialized: view
